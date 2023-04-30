@@ -3,13 +3,7 @@
 
 class Acceptor{
     public:
-        Acceptor(boost::asio::io_service& ios, unsigned short port):
-            m_ios(ios), m_acceptor(
-                    m_ios, 
-                    boost::asio::ip::tcp::endpoint(boost::asio::ip::address_v4::any(),port)){
-            m_acceptor.listen();
-        }
-
+        Acceptor(boost::asio::io_service& ios, unsigned short port);
         void Accept();
 
     private:
