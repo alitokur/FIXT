@@ -11,7 +11,7 @@ int main(){
         std::this_thread::sleep_for(std::chrono::seconds(60));
         order_entry_point.stop();
     }
-    catch(system::system_error &e){
+    catch(boost::system::system_error &e){
         std::cout << "Server can't launch" << std::endl;
         std::cout << "Error Code: " << e.what() << std::endl;
     }

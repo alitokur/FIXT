@@ -4,7 +4,7 @@ Service::Service(){
     //def constructor
 }
 
-void HandleClient(boost::asio::ip::tcp::socket& sock){
+void Service::HandleClient(boost::asio::ip::tcp::socket& sock){
     try{
         boost::asio::streambuf request;
         boost::asio::read_until(sock, request, "\n");
