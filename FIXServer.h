@@ -1,11 +1,18 @@
-
-#include <algorithm>
 #include <iostream>
+#include <boost/asio.hpp>
+#include "Acceptor.h"
+
 class FIXServer{
     public:
-        FIXServer(int _port);
+        FIXServer(int);
+        void launch(); 
+        void stop();
+
     private:
+        void run();
         int port;
-        bool running;
+        std::unique_ptr<std::thread>m_thread;
+        std::atomic<bool>m_stop;
+        boost::asio::io_service m_ios;
 };
 
