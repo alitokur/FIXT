@@ -1,44 +1,67 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
-using namespace boost::asio;
-using ip::tcp;
+class SyncTcpClient{
+    public:
+        SyncTcpClient(const std::string& raw_ip_address,
+                unsigned short port_num):
+            m_ep(boost::asio::ip::address::from_string(raw_ip_address), port_num),
+            m_sock(m_ios){
+                m_sock.open(m_ep.protocol());
+            }
+
+        void connect(){
+            m_sock.connect(m_ep);
+        }
+
+        void close(){
+            m_sock.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+            m_sock.close();
+        }
+        
+        std::string test_computation(){
+            std::string request = "emulate_long_comp_op\n";
+            send_request(request);
+            return receiveResponse();
+        }
+
+
+
+
+    private:
+        
+        boost::asio::io_service m_ios;
+        boost::asio::ip::tcp::endpoint m_ep;
+        boost::asio::ip::tcp::socket m_sock;
+    
+        void send_request(const std::string& request){
+            boost::asio::write(m_sock, boost::asio::buffer(request));
+        }
+
+        std::string receiveResponse(){
+            boost::asio::streambuf buf;
+            boost::asio::read_until(m_sock, buf, '\n');
+            std::istream input(&buf);
+            std::string response;
+            std::getline(input, response);
+            return response;
+        }
+};
 
 int main() {
-  try {
-    // Create a TCP socket
-    io_context io_context;
-    tcp::socket socket(io_context);
-
-    // Connect to the server
-    tcp::endpoint endpoint(ip::address::from_string("127.0.0.1"), 1234);
-    socket.connect(endpoint);
-
-    // Send a message to the server
-    std::string message = "Hello, server!";
-    boost::asio::write(socket, boost::asio::buffer(message));
-
-    // Receive a response from the server
-    boost::asio::streambuf receive_buffer;
-    boost::system::error_code error;
-    size_t len = boost::asio::read_until(socket, receive_buffer, "\n", error);
-
-    if (error == boost::asio::error::eof) {
-      // The connection was closed by the server
-      std::cout << "Connection closed by server" << std::endl;
+    const std::string raw_ip_address = "127.0.0.1";
+    const unsigned short port_num = 1234;
+    try {
+        SyncTcpClient client(raw_ip_address, port_num);
+        client.connect();
+        std::cout << "sending request to the server..." << std::endl;
+        // Connect to the server
+        std::string response = client.test_computation();
+        std::cout << "response received: " << response << std::endl;
+        client.close();
     }
-    else if (error) {
-      // Some other error occurred
-      throw boost::system::system_error(error);
-    }
-    else {
-      // Process the response from the server
-      std::string response = boost::asio::buffer_cast<const char*>(receive_buffer.data());
-      std::cout << "Response from server: " << response << std::endl;
-    }
-  }
-  catch (std::exception& e) {
-    std::cerr << "Exception: " << e.what() << std::endl;
+  catch (boost::system::system_error &e) {
+    std::cerr << "Exception: " << e.code()  << "what " << e.what() << std::endl;
   }
 
   return 0;
