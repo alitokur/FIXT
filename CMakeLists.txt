@@ -4,7 +4,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set (CMAKE_CXX_STANDARD 17)
 find_package(Boost REQUIRED COMPONENTS system)
 include_directories(${Boost_INCLUDE_DIRS})
-add_executable(run_server main.cpp FIXServer.cpp Service.cpp Acceptor.cpp)
-target_link_libraries(run_server Boost::system)
 
+add_subdirectory(src)
 add_subdirectory(apps)
