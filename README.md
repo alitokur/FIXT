@@ -3,7 +3,8 @@
 <h1>Low Latency FIX TCP Server Simulator</h1>
 <h5>  FIXT is an open source project that provides a server for sending orders to TCP exchanges by simulating Order Entry Point Sessions. </h5>
   
-![Work In Progress](https://img.shields.io/badge/-WORK%20IN%20PROGRESS-green)
+![Build](https://img.shields.io/github/actions/workflow/status/alitokur/FIXT/cmake.yml) 
+![Work In Progress](https://img.shields.io/badge/-WORK%20IN%20PROGRESS-orange)
 ![Issues](https://img.shields.io/bitbucket/issues/alitokur/FIXT)
 
 </div>
